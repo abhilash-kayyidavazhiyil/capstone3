@@ -1,0 +1,5 @@
+transformers  # Adjust version if specific compatibility is needed
+torch         # Adjust version based on GPU compatibility
+opencv-python # For cv2 library
+pillow      # For PIL (Python Imaging Library)
+neo4j       # For Neo4j database interactions

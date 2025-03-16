@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Frame Extractor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Video Frame Extractor</h1>
+        <form method="POST">
+            <label for="caption">Enter the Caption:</label>
+            <input type="text" id="caption" name="caption" value="{{ input_text }}">
+            <button type="submit">Search</button>
+        </form>
+
+        {% if video_dict %}
+            <h2>Select Video and Timestamp</h2>
+            <form method="POST" action="{{ url_for('show_frame') }}">
+                <label for="videoDropdown">Select Video:</label>
+                <select id="videoDropdown" name="selected_video">
+                    <option value="">Select a video</option>
+                    {% for video_name in video_dict.keys() %}
+                        <option value="{{ video_name }}">{{ video_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="timestampDropdown">Select Timestamp:</label>
+                <select id="timestampDropdown" name="selected_timestamp">
+                    <option value="">Select a timestamp</option>
+                </select>
+
+                <button type="submit">Show Frame</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // Pass the video_dict from Flask to JavaScript
+        const videoDict = {{ video_dict | tojson }};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoDropdown = document.getElementById('videoDropdown');
+            const timestampDropdown = document.getElementById('timestampDropdown');
+    
+            videoDropdown.addEventListener('change', function() {
+                const selectedVideo = this.value;
+                updateTimestamps(selectedVideo);
+            });
+    
+            function updateTimestamps(video) {
+                // Clear existing timestamps
+                timestampDropdown.innerHTML = '<option value="">Select a timestamp</option>';
+    
+                // Populate timestamps based on selected video
+                if (videoDict[video]) {
+                    videoDict[video].forEach(function(timestamp) {
+                        const option = document.createElement('option');
+                        option.value = timestamp;
+                        option.textContent = timestamp;
+                        timestampDropdown.appendChild(option);
+                    });
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>
